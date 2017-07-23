@@ -11,16 +11,6 @@ class BuildingAttributes
     use PrimaryKeyTrait;
 
     /**
-     * @var
-     */
-    protected $unitsUnlocked;
-
-    /**
-     * @var
-     */
-    protected $buildingsUnlocked;
-
-    /**
      * @var int
      * @Column(type="integer")
      */
@@ -48,5 +38,35 @@ class BuildingAttributes
      * @var int
      * @Column(type="integer")
      */
+    protected $cultureProduction;
+
+    /**
+     * @var int
+     * @Column(type="integer")
+     */
+    protected $faithProduction;
+
+    /**
+     * @var int
+     * @Column(type="integer")
+     */
     protected $maintenanceCostInGold;
+
+    public function __construct(
+        int $foodProduction,
+        int $buildingProduction,
+        int $unitProduction,
+        int $goldProduction,
+        int $faithProduction,
+        int $cultureProduction,
+        int $maintenanceCost
+    ) {
+        $this->foodProduction = $foodProduction;
+        $this->buildingProduction = $buildingProduction;
+        $this->unitProduction = $unitProduction;
+        $this->goldProduction = $goldProduction;
+        $this->faithProduction = $faithProduction;
+        $this->cultureProduction = $cultureProduction;
+        $this->maintenanceCostInGold = $maintenanceCost;
+    }
 }

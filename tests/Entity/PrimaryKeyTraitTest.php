@@ -4,13 +4,15 @@ namespace TileLand\Tests\Entity;
 
 use PHPUnit\Framework\TestCase;
 use TileLand\City\Building\TradingPost;
+use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\Building;
 
 class PrimaryKeyTraitTest extends TestCase
 {
     public function testGetId(): void
     {
-        $building = new Building(new TradingPost());
+        $civilization = new TestCivilization();
+        $building = $civilization->createBuildingEntity(new TradingPost());
         static::assertNull($building->getId());
 
         global $em;

@@ -5,6 +5,7 @@ namespace TileLand\Tests\Entity;
 use PHPUnit\Framework\TestCase;
 use TileLand\City\Building\TradingPost;
 use TileLand\City\StubProducible;
+use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\Building;
 use TileLand\Entity\Production;
 use TileLand\Entity\UnitAttributes;
@@ -23,7 +24,8 @@ class ProductionTest extends TestCase
 
     public function testSetBuildingProduction(): void
     {
-        $building = new Building(new TradingPost());
+        $civilization = new TestCivilization();
+        $building = $civilization->createBuildingEntity(new TradingPost());
         $production = new Production($building);
         static::assertEquals($building, $production->getProducing());
     }

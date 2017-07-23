@@ -16,4 +16,6 @@ interface Buildings
 
     const OUTPOST = 'outpost';
     const WALLS = 'walls';
+
+    const TEST_BUILDING = 'test building';
 }

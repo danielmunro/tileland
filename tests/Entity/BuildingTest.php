@@ -9,6 +9,7 @@ use TileLand\City\Building\Granary;
 use TileLand\City\Building\Outpost;
 use TileLand\City\Building\Shrine;
 use TileLand\City\Building\TradingPost;
+use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\Building;
 use TileLand\Entity\BuildingAttributes;
 use TileLand\Entity\City;
@@ -17,15 +18,20 @@ use TileLand\Enum\BuildingType;
 
 class BuildingTest extends TestCase
 {
-    public function testGetBuildingTypeEqualsExpectedBuildingType(): void
+    public function testGetBuildingSanity(): void
     {
-        static::assertEquals((new Building(new Granary()))->getBuilding(), new Granary());
+        $testCivilization = new TestCivilization();
+        static::assertEquals(
+            $testCivilization->createBuildingEntity(new Granary())->getBuilding(),
+            new Granary()
+        );
     }
 
     public function testBuildingCompleted(): void
     {
+        $testCivilization = new TestCivilization();
         $city = new City('test');
-        $building = new Building(new TradingPost(), new BuildingAttributes());
+        $building = $testCivilization->createBuildingEntity(new TradingPost());
         $city->changeProduction(new Production($building));
         $city->completeProduction();
         static::assertNull($city->getProduction());
@@ -37,7 +43,8 @@ class BuildingTest extends TestCase
      */
     public function testCannotMoveBuildingToDifferentCity(): void
     {
-        $building = new Building(new Shrine());
+        $testCivilization = new TestCivilization();
+        $building = $testCivilization->createBuildingEntity(new Shrine());
         $building->setCityProduced(new City('test'));
         $building->setCityProduced(new City('test'));
     }
@@ -47,16 +54,18 @@ class BuildingTest extends TestCase
      */
     public function testCannotMoveUnlockedBuildingToDifferentCity(): void
     {
-        $building = new Building(new Shrine());
+        $testCivilization = new TestCivilization();
+        $building = $testCivilization->createBuildingEntity(new TradingPost());
         $building->setCityUnlocked(new City('test'));
         $building->setCityUnlocked(new City('test'));
     }
 
     public function testGetBaseProductionCost(): void
     {
+        $testCivilization = new TestCivilization();
         static::assertEquals(
             (new Shrine())->getBaseProductionCost(),
-            (new Building(new Shrine()))->getBaseProductionCost()
+            $testCivilization->createBuildingEntity(new Shrine())->getBaseProductionCost()
         );
     }
 
@@ -67,7 +76,8 @@ class BuildingTest extends TestCase
      */
     public function testGetBuildingsUnlocked(\TileLand\City\Building\Building $building): void
     {
-        $buildingEntity = new Building($building);
+        $testCivilization = new TestCivilization();
+        $buildingEntity = $testCivilization->createBuildingEntity($building);
         foreach ($buildingEntity->getBuildingsUnlocked() as $buildingUnlocked) {
             static::assertInstanceOf(\TileLand\City\Building\Building::class, $buildingUnlocked);
         }

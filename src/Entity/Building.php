@@ -38,9 +38,10 @@ class Building implements Producible
      */
     protected $cityUnlocked;
 
-    public function __construct(\TileLand\City\Building\Building $building)
+    public function __construct(\TileLand\City\Building\Building $building, BuildingAttributes $buildingAttributes)
     {
         $this->building = $building->getName();
+        $this->buildingAttributes = $buildingAttributes;
     }
 
     public function getBuilding(): \TileLand\City\Building\Building

@@ -7,6 +7,7 @@ use TileLand\City\Building\Barracks;
 use TileLand\City\Building\Shrine;
 use TileLand\City\Building\TradingPost;
 use TileLand\City\StubProducible;
+use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\Building;
 use TileLand\Entity\City;
 use TileLand\Entity\Production;
@@ -45,7 +46,8 @@ class CityTest extends TestCase
      */
     public function testAddProducedBuilding(): void
     {
-        $building = new Building(new TradingPost());
+        $civilization = new TestCivilization();
+        $building = $civilization->createBuildingEntity(new TradingPost());
         static::assertFalse($this->city->hasBuilding($building));
         $this->city->addBuildingProduced($building);
         static::assertTrue($this->city->hasBuilding($building));
@@ -64,7 +66,8 @@ class CityTest extends TestCase
 
     public function testAddUnlockedBuilding(): void
     {
-        $building = new Building(new TradingPost());
+        $civilization = new TestCivilization();
+        $building = $civilization->createBuildingEntity(new TradingPost());
         static::assertFalse($this->city->hasBuilding($building));
         $this->city->addBuildingUnlocked($building);
         static::assertFalse($this->city->hasBuilding($building));
@@ -84,9 +87,10 @@ class CityTest extends TestCase
      */
     public function testCannotAddUnlockedBuildingTwice(): void
     {
+        $civilization = new TestCivilization();
         $tradingPost = new TradingPost();
-        $this->city->addBuildingUnlocked(new Building($tradingPost));
-        $this->city->addBuildingUnlocked(new Building($tradingPost));
+        $this->city->addBuildingUnlocked($civilization->createBuildingEntity($tradingPost));
+        $this->city->addBuildingUnlocked($civilization->createBuildingEntity($tradingPost));
     }
 
     /**
@@ -94,18 +98,20 @@ class CityTest extends TestCase
      */
     public function testCannotAddTwoBuildingsSameType(): void
     {
+        $civilization = new TestCivilization();
         $tradingPost = new TradingPost();
-        $this->city->addBuildingProduced(new Building($tradingPost));
-        $this->city->addBuildingProduced(new Building($tradingPost));
+        $this->city->addBuildingProduced($civilization->createBuildingEntity($tradingPost));
+        $this->city->addBuildingProduced($civilization->createBuildingEntity($tradingPost));
     }
 
     public function testChangePersistProduction(): void
     {
         global $em;
-        $this->city->changeProduction(new Production(new Building(new Shrine())));
+        $civilization = new TestCivilization();
+        $this->city->changeProduction(new Production($civilization->createBuildingEntity(new Shrine())));
         $em->persist($this->city);
         $em->flush();
-        $this->city->changeProduction(new Production(new Building(new Barracks())));
+        $this->city->changeProduction(new Production($civilization->createBuildingEntity(new Barracks())));
         $em->persist($this->city);
         $em->flush();
         static::assertEquals($this->city->getProduction()->getProducing()->getBuilding(), new Barracks());
@@ -113,7 +119,8 @@ class CityTest extends TestCase
 
     public function testReduceProductionCost(): void
     {
-        $this->city->changeProduction(new Production(new Building(new TradingPost())));
+        $civilization = new TestCivilization();
+        $this->city->changeProduction(new Production($civilization->createBuildingEntity(new TradingPost())));
         $this->city->reduceProductionCost();
         static::assertLessThan((new TradingPost())->getBaseProductionCost(), $this->city->getRemainingProductionCost());
     }

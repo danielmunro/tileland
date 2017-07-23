@@ -4,6 +4,7 @@ namespace TileLand\Tests\Tile;
 
 use PHPUnit\Framework\TestCase;
 use TileLand\City\Building\TradingPost;
+use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\Building;
 use TileLand\Entity\City;
 use TileLand\Entity\Player;
@@ -46,8 +47,9 @@ class TurnTest extends TestCase
      */
     public function testCannotAddActionBeforeTurnStarts(): void
     {
+        $civilization = new TestCivilization();
         $city = new City('test');
-        $this->turn->addAction(new CityAction($city, new Building(new TradingPost())));
+        $this->turn->addAction(new CityAction($city, $civilization->createBuildingEntity(new TradingPost())));
     }
 
     public function testAddActionBuildUnit(): void
@@ -68,7 +70,8 @@ class TurnTest extends TestCase
         $this->turn->start();
         $city = new City('test');
         $this->player->addCity($city);
-        $building = new Building(new TradingPost());
+        $civilization = new TestCivilization();
+        $building = $civilization->createBuildingEntity(new TradingPost());
         $productionCost = $building->getBaseProductionCost();
         $this->turn->addAction(new CityAction($city, $building));
         $this->turn->start();
