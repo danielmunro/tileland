@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TileLand\City\Building;
 
 use Doctrine\Common\Collections\Collection;
+use TileLand\Civilization\Civilization;
 
 interface Building
 {
@@ -16,4 +17,6 @@ interface Building
     public function getUnitsUnlocked(): Collection;
 
     public function getBuildingsUnlocked(): Collection;
+
+    public function createEntityForCivilization(Civilization $civilization): \TileLand\Entity\Building;
 }

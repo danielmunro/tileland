@@ -3,80 +3,36 @@ declare(strict_types=1);
 
 namespace TileLand\Civilization;
 
-use TileLand\City\Building\Barracks;
-use TileLand\City\Building\Granary;
-use TileLand\City\Building\Shrine;
-use TileLand\City\Building\TradingPost;
 use TileLand\Entity\Building;
-use TileLand\Entity\BuildingAttributes;
 use TileLand\Entity\Unit;
+use TileLand\Entity\UnitAttributes;
 use TileLand\Enum\UnitType;
+use TileLand\Unit\Worker;
 
 abstract class DefaultCivilization implements Civilization
 {
     public function createBuildingEntity(\TileLand\City\Building\Building $building): Building
     {
-        switch (get_class($building)) {
-            case TradingPost::class:
-                return new Building(
-                    $building,
-                    new BuildingAttributes(
-                        0,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                        0
-                    )
-                );
-            case Granary::class:
-                return new Building(
-                    $building,
-                    new BuildingAttributes(
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        1
-                    )
-                );
-            case Shrine::class:
-                return new Building(
-                    $building,
-                    new BuildingAttributes(
-                        0,
-                        0,
-                        0,
-                        0,
-                        1,
-                        0,
-                        1
-                    )
-                );
-            case Barracks::class:
-                return new Building(
-                    $building,
-                    new BuildingAttributes(
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                        0,
-                        1
-                    )
-                );
-            default:
-                throw new \InvalidArgumentException();
-        }
+        return $building->createEntityForCivilization($this);
     }
 
-    public function createUnitFromUnitType(UnitType $unitType): Unit
+    public function createUnitEntity(\TileLand\Unit\Unit $unit): Unit
     {
-        switch (get_class($unitType)) {
+        /**
+         * @todo apply same pattern as $this->createBuildingEntity()
+         */
+        switch (get_class($unit)) {
+            case Worker::class:
+                return new Unit(
+                    UnitType::WORKER(),
+                    new UnitAttributes(
+                        10,
+                        1,
+                        0,
+                        0,
+                        '0'
+                    )
+                );
             default:
                 throw new \RuntimeException('not implemented');
         }

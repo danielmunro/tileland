@@ -7,32 +7,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use TileLand\Civilization\Civilization;
 use TileLand\Entity\BuildingAttributes;
-use TileLand\Enum\UnitType;
 
-class Outpost implements Building
+class Library implements Building
 {
     public function getName(): string
     {
-        return Buildings::OUTPOST;
+        return Buildings::LIBRARY;
     }
 
     public function getBaseProductionCost(): int
     {
-        return 15;
+        return 30;
     }
 
     public function getBuildingsUnlocked(): Collection
     {
-        return new ArrayCollection([
-            new Walls(),
-        ]);
+        return new ArrayCollection([]);
     }
 
     public function getUnitsUnlocked(): Collection
     {
-        return new ArrayCollection([
-            UnitType::EXPLORER(),
-        ]);
+        return new ArrayCollection([]);
     }
 
     public function createEntityForCivilization(Civilization $civilization): \TileLand\Entity\Building
@@ -46,7 +41,7 @@ class Outpost implements Building
                 0,
                 0,
                 0,
-                0,
+                1,
                 0,
                 1
             )
