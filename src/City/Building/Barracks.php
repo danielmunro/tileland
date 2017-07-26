@@ -5,9 +5,8 @@ namespace TileLand\City\Building;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use TileLand\Civilization\Civilization;
 use TileLand\Entity\BuildingAttributes;
-use TileLand\Enum\UnitType;
+use TileLand\Unit\Clubman;
 
 class Barracks implements Building
 {
@@ -29,11 +28,11 @@ class Barracks implements Building
     public function getUnitsUnlocked(): Collection
     {
         return new ArrayCollection([
-            UnitType::CLUBMAN(),
+            new Clubman(),
         ]);
     }
 
-    public function createEntityForCivilization(Civilization $civilization): \TileLand\Entity\Building
+    public function createEntity(): \TileLand\Entity\Building
     {
         return new \TileLand\Entity\Building(
             $this,

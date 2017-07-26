@@ -3,37 +3,41 @@
 namespace TileLand\Tests\Entity;
 
 use PHPUnit\Framework\TestCase;
+use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\City;
 use TileLand\Entity\Player;
 use TileLand\Entity\Unit;
 use TileLand\Entity\UnitAttributes;
 use TileLand\Enum\Civilization;
 use TileLand\Enum\UnitType;
+use TileLand\Unit\Trader;
 use TileLand\Unit\UnitFactory;
 
 class PlayerTest extends TestCase
 {
     public function testGetCivilization(): void
     {
-        static::assertTrue(
-            (new Player(Civilization::CHINESE(), true))
+        $civilization = new TestCivilization();
+        static::assertEquals(
+            $civilization,
+            (new Player(new TestCivilization(), true))
                 ->getCivilization()
-                ->equals(Civilization::CHINESE())
         );
     }
 
     public function testGetUnits(): void
     {
-        $player = new Player(Civilization::CHINESE(), true);
-        $player->addUnit(UnitFactory::createWithUnitType(UnitType::TRADER()));
-        $player->addUnit(UnitFactory::createWithUnitType(UnitType::TRADER()));
-        $player->addUnit(UnitFactory::createWithUnitType(UnitType::TRADER()));
+        $civilization = new TestCivilization();
+        $player = new Player($civilization, true);
+        $player->addUnit($civilization->createUnitEntity(new Trader()));
+        $player->addUnit($civilization->createUnitEntity(new Trader()));
+        $player->addUnit($civilization->createUnitEntity(new Trader()));
         static::assertCount(3, $player->getUnits());
     }
 
     public function testGetCities(): void
     {
-        $player = new Player(Civilization::CHINESE(), true);
+        $player = new Player(new TestCivilization(), true);
         $player->addCity(new City('test'));
         $player->addCity(new City('test'));
         $player->addCity(new City('test'));

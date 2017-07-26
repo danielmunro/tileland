@@ -8,6 +8,8 @@ use TileLand\Entity\Unit;
 
 interface Civilization
 {
+    public function getName(): string;
+
     public function createBuildingEntity(\TileLand\City\Building\Building $building): Building;
 
     public function createUnitEntity(\TileLand\Unit\Unit $unit): Unit;

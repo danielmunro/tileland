@@ -3,12 +3,11 @@
 namespace TileLand\Tests\Tile;
 
 use PHPUnit\Framework\TestCase;
+use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\City;
-use TileLand\Entity\Unit;
-use TileLand\Entity\UnitAttributes;
 use TileLand\Enum\ActionStatus;
-use TileLand\Enum\UnitType;
 use TileLand\Player\Action\ActionResult;
+use TileLand\Unit\Trader;
 
 class ActionResultTest extends TestCase
 {
@@ -17,7 +16,8 @@ class ActionResultTest extends TestCase
         $city = new City('test');
         static::assertEquals($city, (new ActionResult($city, ActionStatus::COMPLETE()))->getActionCreator());
 
-        $unit = new Unit(UnitType::TRADER(), new UnitAttributes(1, 1, 1, 0, '0'));
+        $civilization = new TestCivilization();
+        $unit = $civilization->createUnitEntity(new Trader());
         static::assertEquals($unit, (new ActionResult($unit, ActionStatus::COMPLETE()))->getActionCreator());
     }
 

@@ -30,7 +30,7 @@ class TestBuilding implements Building
         return new ArrayCollection([]);
     }
 
-    public function createEntityForCivilization(Civilization $civilization): \TileLand\Entity\Building
+    public function createEntity(): \TileLand\Entity\Building
     {
         return new \TileLand\Entity\Building(
             $this,

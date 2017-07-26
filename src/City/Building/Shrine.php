@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use TileLand\Civilization\Civilization;
 use TileLand\Entity\BuildingAttributes;
 use TileLand\Enum\UnitType;
+use TileLand\Unit\Pagan;
 
 class Shrine implements Building
 {
@@ -29,11 +30,11 @@ class Shrine implements Building
     public function getUnitsUnlocked(): Collection
     {
         return new ArrayCollection([
-            UnitType::PAGAN(),
+            new Pagan(),
         ]);
     }
 
-    public function createEntityForCivilization(Civilization $civilization): \TileLand\Entity\Building
+    public function createEntity(): \TileLand\Entity\Building
     {
         return new \TileLand\Entity\Building(
             $this,

@@ -3,6 +3,7 @@
 namespace TileLand\Tests\Entity;
 
 use PHPUnit\Framework\TestCase;
+use TileLand\Civilization\TestCivilization;
 use TileLand\Direction\West;
 use TileLand\Entity\Edge;
 use TileLand\Entity\Player;
@@ -13,14 +14,17 @@ use TileLand\Enum\Civilization;
 use TileLand\Enum\Terrain;
 use TileLand\Enum\UnitType;
 use TileLand\Player\Action\UnitAction;
+use TileLand\Unit\Clubman;
+use TileLand\Unit\Trader;
 use TileLand\Unit\UnitFactory;
 
 class UnitTest extends TestCase
 {
     public function testAttack(): void
     {
-        $unit1 = UnitFactory::createWithUnitType(UnitType::CLUBMAN());
-        $unit2 = UnitFactory::createWithUnitType(UnitType::CLUBMAN());
+        $civilization = new TestCivilization();
+        $unit1 = $civilization->createUnitEntity(new Clubman());
+        $unit2 = $civilization->createUnitEntity(new Clubman());
 
         $unit1Hp = $unit1->getHp();
         $attack = $unit2->attack($unit1);
@@ -35,7 +39,8 @@ class UnitTest extends TestCase
 
     public function testMoveAction(): void
     {
-        $unit = UnitFactory::createWithUnitType(UnitType::TRADER());
+        $civilization = new TestCivilization();
+        $unit = $civilization->createUnitEntity(new Trader());
         $tile1 = new Tile(Terrain::PLAINS());
         $tile2 = new Tile(Terrain::PLAINS());
         $tile1->addEdge(new Edge(new West(), $tile1, $tile2));
@@ -45,7 +50,7 @@ class UnitTest extends TestCase
         static::assertCount(0, $tile2->getUnits());
         static::assertEquals($tile1, $unit->getTile());
 
-        $turn = new Turn(new Player(Civilization::CHINESE(), true));
+        $turn = new Turn(new Player($civilization, true));
         $turn->start();
         $turn->addAction(new UnitAction($unit, ActionType::MOVE(), new West()));
         $turn->end();

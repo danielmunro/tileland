@@ -11,13 +11,15 @@ use TileLand\Entity\Production;
 use TileLand\Entity\UnitAttributes;
 use TileLand\Entity\Unit;
 use TileLand\Enum\UnitType;
+use TileLand\Unit\Trader;
 use TileLand\Unit\UnitFactory;
 
 class ProductionTest extends TestCase
 {
     public function testSetUnitProduction(): void
     {
-        $unit = UnitFactory::createWithUnitType(UnitType::CLUBMAN());
+        $civilization = new TestCivilization();
+        $unit = $civilization->createUnitEntity(new Trader());
         $production = new Production($unit);
         static::assertEquals($unit, $production->getProducing());
     }

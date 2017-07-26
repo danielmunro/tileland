@@ -19,6 +19,7 @@ use TileLand\Enum\Terrain;
 use TileLand\Enum\UnitType;
 use TileLand\Player\Action\CityAction;
 use TileLand\Player\ActionContext\ProducibleActionContext;
+use TileLand\Unit\Trader;
 
 class CityTest extends TestCase
 {
@@ -55,12 +56,14 @@ class CityTest extends TestCase
 
     public function testProductionCompleted(): void
     {
+        $trader = new Trader();
+        $civilization = new TestCivilization();
         $tile = new Tile(Terrain::PLAINS());
-        $this->city->changeProduction(new Production(new Unit(UnitType::TRADER(), new UnitAttributes(1, 1, 1, 0, '0'))));
+        $this->city->changeProduction(new Production($civilization->createUnitEntity($trader)));
         $tile->setCity($this->city);
         $this->city->completeProduction();
         static::assertCount(1, $tile->getUnits());
-        static::assertTrue($tile->getUnits()->first()->getUnitType()->equals(UnitType::TRADER()));
+        static::assertEquals($tile->getUnits()->first()->getUnitType(), $trader);
         static::assertNull($this->city->getProduction());
     }
 

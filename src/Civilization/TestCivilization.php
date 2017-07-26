@@ -5,4 +5,8 @@ namespace TileLand\Civilization;
 
 class TestCivilization extends DefaultCivilization
 {
+    public function getName(): string
+    {
+        return Civilizations::TEST;
+    }
 }

@@ -14,6 +14,7 @@ use TileLand\Player\Action\ActionResult;
 use TileLand\Player\ActionContext\ActionContext;
 use TileLand\Player\ActionContext\CommandActionContext;
 use TileLand\Unit\Attack;
+use TileLand\Unit\UnitFactory;
 
 /**
  * @Entity
@@ -52,9 +53,9 @@ class Unit implements Producible, ActionCreator
      */
     protected $baseProductionCost;
 
-    public function __construct(UnitType $unitType, UnitAttributes $attributes)
+    public function __construct(\TileLand\Unit\Unit $unit, UnitAttributes $attributes)
     {
-        $this->type = $unitType->getValue();
+        $this->type = $unit->getName();
         $this->attributes = $attributes;
         $this->baseProductionCost = 1;
     }
@@ -75,9 +76,9 @@ class Unit implements Producible, ActionCreator
         );
     }
 
-    public function getUnitType(): UnitType
+    public function getUnitType(): \TileLand\Unit\Unit
     {
-        return new UnitType($this->type);
+        return UnitFactory::createUnitFromName($this->type);
     }
 
     public function getHp(): int

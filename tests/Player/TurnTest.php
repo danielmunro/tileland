@@ -4,18 +4,16 @@ namespace TileLand\Tests\Tile;
 
 use PHPUnit\Framework\TestCase;
 use TileLand\City\Building\TradingPost;
+use TileLand\Civilization\Civilization;
 use TileLand\Civilization\TestCivilization;
-use TileLand\Entity\Building;
 use TileLand\Entity\City;
 use TileLand\Entity\Player;
 use TileLand\Entity\Tile;
 use TileLand\Entity\Turn;
-use TileLand\Entity\Unit;
-use TileLand\Entity\UnitAttributes;
-use TileLand\Enum\Civilization;
 use TileLand\Enum\Terrain;
 use TileLand\Enum\UnitType;
 use TileLand\Player\Action\CityAction;
+use TileLand\Unit\Trader;
 use TileLand\Unit\UnitFactory;
 
 class TurnTest extends TestCase
@@ -32,7 +30,7 @@ class TurnTest extends TestCase
 
     public function setUp(): void
     {
-        $this->player = new Player($this->getMockBuilder(Civilization::class)->disableOriginalConstructor()->getMock(), true);
+        $this->player = new Player($this->getMockBuilder(TestCivilization::class)->disableOriginalConstructor()->getMock(), true);
         $this->turn = new Turn($this->player);
     }
 
@@ -59,7 +57,8 @@ class TurnTest extends TestCase
         $city = new City('test');
         $tile->setCity($city);
         $this->player->addCity($city);
-        $this->turn->addAction(new CityAction($city, UnitFactory::createWithUnitType(UnitType::TRADER())));
+        $civilization = new TestCivilization();
+        $this->turn->addAction(new CityAction($city, $civilization->createUnitEntity(new Trader())));
         static::assertCount(0, $tile->getUnits());
         $this->turn->end();
         static::assertCount(1, $tile->getUnits());
@@ -81,7 +80,8 @@ class TurnTest extends TestCase
 
     public function testStartRegenUnits(): void
     {
-        $unit = UnitFactory::createWithUnitType(UnitType::TRADER());
+        $civilization = new TestCivilization();
+        $unit = $civilization->createUnitEntity(new Trader());
         $startingHp = $unit->getHp();
         $unit->receiveDamage(5);
         $unit->consumeMovement();
