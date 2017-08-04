@@ -32,4 +32,3 @@ class UnitAction implements Action
         return $this->actionCreator->performAction($this, new CommandActionContext($this->actionType, ...$this->args));
     }
 }
-
