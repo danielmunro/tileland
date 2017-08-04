@@ -13,21 +13,6 @@ use TileLand\Unit\Trader;
 
 class PlayerTest extends TestCase
 {
-    public function testDebitMaintenanceGold(): void
-    {
-        $civ = new TestCivilization();
-        $city = new City('test');
-
-        $building = $civ->createBuildingEntity(new TradingPost());
-        $city->addBuildingProduced($building);
-        $cost = $city->getMaintenanceCostInGold();
-        static::assertGreaterThan(0, $cost);
-
-        $building = $civ->createBuildingEntity(new Shrine());
-        $city->addBuildingProduced($building);
-        static::assertGreaterThan($cost, $city->getMaintenanceCostInGold());
-    }
-
     /**
      * @dataProvider getNewUserCanCreateAnyCivilizationDatProvider
      * @param Civilization $civilization
