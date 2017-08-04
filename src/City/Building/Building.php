@@ -13,6 +13,8 @@ interface Building
 
     public function getBaseProductionCost(): int;
 
+    public function getMaintenanceCostInGold(): int;
+
     public function getUnitsUnlocked(): Collection;
 
     public function getBuildingsUnlocked(): Collection;

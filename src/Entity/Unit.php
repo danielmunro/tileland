@@ -160,4 +160,10 @@ class Unit implements Producible, ActionCreator
     {
         $this->tile = $tile;
     }
+
+    public function getMaintenanceCostInGold(): int
+    {
+        return 1;
+        //return $this->getBuilding()->getM
+    }
 }

@@ -3,12 +3,16 @@
 namespace TileLand\Tests\Entity;
 
 use PHPUnit\Framework\TestCase;
+use TileLand\City\Building\Aqueduct;
 use TileLand\City\Building\Barracks;
+use TileLand\City\Building\BuildingFactory;
+use TileLand\City\Building\Buildings;
 use TileLand\City\Building\Shrine;
 use TileLand\City\Building\TradingPost;
 use TileLand\City\StubProducible;
 use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\Building;
+use TileLand\Entity\BuildingAttributes;
 use TileLand\Entity\City;
 use TileLand\Entity\Production;
 use TileLand\Entity\Tile;
@@ -33,6 +37,23 @@ class CityTest extends TestCase
         $this->city = new City('test');
     }
 
+    public function testMaintenanceCost(): void
+    {
+        $civ = new TestCivilization();
+
+        // assert base condition
+        static::assertEquals(0, $this->city->getMaintenanceCostInGold());
+
+        // add a building, assert maintenance cost goes up
+        $this->city->addBuildingProduced($civ->createBuildingEntity(new Aqueduct()));
+        static::assertGreaterThan(0, $this->city->getMaintenanceCostInGold());
+
+        // add a new building, assert maintenance cost stacks
+        $maintenanceCost = $this->city->getMaintenanceCostInGold();
+        $this->city->addBuildingProduced($civ->createBuildingEntity(new Shrine()));
+        static::assertGreaterThan($maintenanceCost, $this->city->getMaintenanceCostInGold());
+    }
+
     public function testPopulationChange(): void
     {
         $population = $this->city->getPopulation();
@@ -54,7 +75,7 @@ class CityTest extends TestCase
         static::assertTrue($this->city->hasBuilding($building));
     }
 
-    public function testProductionCompleted(): void
+    public function testCityProducesTraderUnit(): void
     {
         $trader = new Trader();
         $civilization = new TestCivilization();

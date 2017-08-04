@@ -1,10 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace TileLand\Entity;
+namespace TileLand\Player;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use function Functional\reduce_left;
+use TileLand\Entity\City;
+use TileLand\Entity\Player;
 use TileLand\Enum\TurnStatus;
 use TileLand\Player\Action\Action;
 
@@ -35,6 +38,17 @@ class Turn
     public function start(): void
     {
         $this->setStatus(TurnStatus::IN_PLAY());
+
+        $this->player->debitGold(
+            reduce_left(
+                $this->player->getCities()->toArray(),
+                function (City $city, int $index, array $cities, int $initial) {
+                    return $initial + $city->getMaintenanceCostInGold();
+                },
+                0
+            )
+        );
+
         foreach ($this->player->getCities() as $city) {
             /** @var City $city */
             if ($city->getProduction() && $city->reduceProductionCost() === 0) {

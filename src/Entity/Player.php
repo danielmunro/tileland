@@ -133,4 +133,11 @@ class Player
     {
         return $this->turn;
     }
+
+    public function debitGold(int $amountToDebit): int
+    {
+        $this->gold -= $amountToDebit;
+
+        return $this->gold;
+    }
 }

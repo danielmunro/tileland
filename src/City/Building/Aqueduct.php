@@ -20,6 +20,11 @@ class Aqueduct implements Building
         return 30;
     }
 
+    public function getMaintenanceCostInGold(): int
+    {
+        return 3;
+    }
+
     public function getBuildingsUnlocked(): Collection
     {
         return new ArrayCollection([]);

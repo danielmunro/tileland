@@ -10,4 +10,6 @@ interface Producible
     public function getBaseProductionCost(): int;
 
     public function completed(City $city): void;
+
+    public function getMaintenanceCostInGold(): int;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TileLand\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use function Functional\reduce_left;
 use TileLand\Enum\ActionStatus;
 use TileLand\Player\Action\Action;
 use TileLand\Player\Action\ActionCreator;
@@ -65,6 +66,11 @@ class City implements ActionCreator
         $this->buildingsProduced = new ArrayCollection();
         $this->buildingsUnlocked = new ArrayCollection();
         $this->population = 1;
+    }
+
+    public function getProductionCapacity(): int
+    {
+        return (int) floor($this->population * 1.5);
     }
 
     public function addBuildingUnlocked(Building $buildingEntity): void
@@ -132,6 +138,17 @@ class City implements ActionCreator
     public function resetProduction(): void
     {
         $this->production = null;
+    }
+
+    public function getMaintenanceCostInGold(): int
+    {
+        return reduce_left(
+            $this->buildingsProduced->toArray(),
+            function (Building $building, int $index, array $buildingsProduced, int $initial) {
+                return $initial + $building->getMaintenanceCostInGold();
+            },
+            0
+        );
     }
 
     public function addCompletedUnitToTile(Unit $unit): void

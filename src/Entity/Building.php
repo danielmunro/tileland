@@ -86,4 +86,9 @@ class Building implements Producible
     {
         $city->addBuildingProduced($this);
     }
+
+    public function getMaintenanceCostInGold(): int
+    {
+        return $this->getBuilding()->getMaintenanceCostInGold();
+    }
 }

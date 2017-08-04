@@ -3,18 +3,52 @@
 namespace TileLand\Tests\Entity;
 
 use PHPUnit\Framework\TestCase;
+use TileLand\City\Building\Shrine;
+use TileLand\City\Building\TradingPost;
+use TileLand\Civilization\Civilization;
 use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\City;
 use TileLand\Entity\Player;
-use TileLand\Entity\Unit;
-use TileLand\Entity\UnitAttributes;
-use TileLand\Enum\Civilization;
-use TileLand\Enum\UnitType;
 use TileLand\Unit\Trader;
-use TileLand\Unit\UnitFactory;
 
 class PlayerTest extends TestCase
 {
+    public function testDebitMaintenanceGold(): void
+    {
+        $civ = new TestCivilization();
+        $city = new City('test');
+
+        $building = $civ->createBuildingEntity(new TradingPost());
+        $city->addBuildingProduced($building);
+        $cost = $city->getMaintenanceCostInGold();
+        static::assertGreaterThan(0, $cost);
+
+        $building = $civ->createBuildingEntity(new Shrine());
+        $city->addBuildingProduced($building);
+        static::assertGreaterThan($cost, $city->getMaintenanceCostInGold());
+    }
+
+    /**
+     * @dataProvider getNewUserCanCreateAnyCivilizationDatProvider
+     * @param Civilization $civilization
+     */
+    public function testNewUserCanCreateAnyCivilization(Civilization $civilization): void
+    {
+        static::assertEquals(
+            (new Player($civilization, false))->getCivilization(),
+            $civilization
+        );
+    }
+
+    public function getNewUserCanCreateAnyCivilizationDatProvider(): array
+    {
+        return [
+            [
+                new TestCivilization(),
+            ],
+        ];
+    }
+
     public function testGetCivilization(): void
     {
         $civilization = new TestCivilization();

@@ -8,15 +8,12 @@ use TileLand\Direction\West;
 use TileLand\Entity\Edge;
 use TileLand\Entity\Player;
 use TileLand\Entity\Tile;
-use TileLand\Entity\Turn;
 use TileLand\Enum\ActionType;
-use TileLand\Enum\Civilization;
 use TileLand\Enum\Terrain;
-use TileLand\Enum\UnitType;
 use TileLand\Player\Action\UnitAction;
+use TileLand\Player\Turn;
 use TileLand\Unit\Clubman;
 use TileLand\Unit\Trader;
-use TileLand\Unit\UnitFactory;
 
 class UnitTest extends TestCase
 {

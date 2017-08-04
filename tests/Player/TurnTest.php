@@ -4,17 +4,14 @@ namespace TileLand\Tests\Tile;
 
 use PHPUnit\Framework\TestCase;
 use TileLand\City\Building\TradingPost;
-use TileLand\Civilization\Civilization;
 use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\City;
 use TileLand\Entity\Player;
 use TileLand\Entity\Tile;
-use TileLand\Entity\Turn;
 use TileLand\Enum\Terrain;
-use TileLand\Enum\UnitType;
 use TileLand\Player\Action\CityAction;
+use TileLand\Player\Turn;
 use TileLand\Unit\Trader;
-use TileLand\Unit\UnitFactory;
 
 class TurnTest extends TestCase
 {

@@ -8,6 +8,8 @@ class BuildingFactory
     public static function createBuildingFromName(string $name): Building
     {
         switch ($name) {
+            case Buildings::AQUEDUCT:
+                return new Aqueduct();
             case Buildings::GRANARY:
                 return new Granary();
             case Buildings::TRADING_POST:

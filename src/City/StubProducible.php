@@ -7,6 +7,11 @@ use TileLand\Entity\City;
 
 class StubProducible implements Producible
 {
+    public function getMaintenanceCostInGold(): int
+    {
+        return 10;
+    }
+
     public function getBaseProductionCost(): int
     {
         return 10;
