@@ -44,6 +44,45 @@ class Building implements Producible
         $this->buildingAttributes = $buildingAttributes;
     }
 
+    public function getCultureProduction(): int
+    {
+        return $this->buildingAttributes->getCultureProduction();
+    }
+
+    public function getUnitProduction(): int
+    {
+        return $this->buildingAttributes->getUnitProduction();
+    }
+
+    public function getGoldProduction(): int
+    {
+        return $this->buildingAttributes->getGoldProduction();
+    }
+
+    public function getFaithProduction(): int
+    {
+        return $this->buildingAttributes->getFaithProduction();
+    }
+
+    public function getMaintenanceCostInGold(): int
+    {
+        return $this->buildingAttributes->getMaintenanceCostInGold();
+    }
+
+    public function getBuildingProduction(): int
+    {
+        return $this->buildingAttributes->getBuildingProduction();
+    }
+
+    /**
+     * @todo remove?
+     * @return BuildingAttributes
+     */
+    public function getBuildingAttributes(): BuildingAttributes
+    {
+        return $this->buildingAttributes;
+    }
+
     public function getBuilding(): \TileLand\City\Building\Building
     {
         return BuildingFactory::createBuildingFromName($this->building);
@@ -85,10 +124,5 @@ class Building implements Producible
     public function completed(City $city): void
     {
         $city->addBuildingProduced($this);
-    }
-
-    public function getMaintenanceCostInGold(): int
-    {
-        return $this->getBuilding()->getMaintenanceCostInGold();
     }
 }

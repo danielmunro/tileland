@@ -22,11 +22,6 @@ class TradingPost implements Building
         return 15;
     }
 
-    public function getMaintenanceCostInGold(): int
-    {
-        return 1;
-    }
-
     public function getBuildingsUnlocked(): Collection
     {
         return new ArrayCollection([]);

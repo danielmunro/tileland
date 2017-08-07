@@ -22,11 +22,6 @@ class Shrine implements Building
         return 20;
     }
 
-    public function getMaintenanceCostInGold(): int
-    {
-        return 1;
-    }
-
     public function getBuildingsUnlocked(): Collection
     {
         return new ArrayCollection([]);

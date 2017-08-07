@@ -2,20 +2,26 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
-$config = \Symfony\Component\Yaml\Yaml::parse(<<<NOCONFIG
-debug: true
-persist:
-  driver: pdo_sqlite
-  path: db.sqlite
-NOCONFIG
-);
+use Silex\Application;
+use TileLand\Silex\ServiceProvider\ConfigServiceProvider;
+use TileLand\Silex\ServiceProvider\EntityManagerServiceProvider;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Setup;
 
-$em = \Doctrine\ORM\EntityManager::create(
-    $config['persist'],
-    \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
-        [
-            __DIR__.'/src/Entity'
-        ],
-        $config['debug']
+$app = new Application();
+$app->register(new ConfigServiceProvider());
+$config = $app['config'];
+$app['debug'] = $config['debug'];
+$app->register(
+    new EntityManagerServiceProvider(
+        EntityManager::create(
+            $config['persist'],
+            Setup::createAnnotationMetadataConfiguration(
+                [
+                    __DIR__.'/src/Entity'
+                ],
+                $config['debug']
+            )
+        )
     )
 );

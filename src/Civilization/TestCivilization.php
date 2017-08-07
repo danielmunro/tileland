@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TileLand\Civilization;
 
-class TestCivilization extends DefaultCivilization
+class TestCivilization extends DefaultCivilization implements Civilization
 {
     public function getName(): string
     {

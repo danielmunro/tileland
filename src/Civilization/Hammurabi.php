@@ -5,19 +5,21 @@ namespace TileLand\Civilization;
 
 use TileLand\City\Building\Bonus\CultureBuildingBonus;
 use TileLand\City\Building\Bonus\MilitaryBuildingBonus;
+use TileLand\City\Building\Bonus\ReligionBuildingBonus;
 
-class RamessesII extends DefaultCivilization implements Civilization
+class Hammurabi extends DefaultCivilization implements Civilization
 {
     protected function __construct()
     {
         $this->setBuildingBonuses([
             new CultureBuildingBonus(),
             new MilitaryBuildingBonus(),
+            new ReligionBuildingBonus(),
         ]);
     }
 
     public function getName(): string
     {
-        return Civilizations::RAMESSES_II;
+        return Civilizations::HAMMURABI;
     }
 }

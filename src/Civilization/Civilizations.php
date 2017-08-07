@@ -11,7 +11,7 @@ interface Civilizations
     const TEST = 'test';
 
     /**
-     * Great works, military
+     * Culture, military
      */
     const RAMESSES_II = 'Ramesses II';
 

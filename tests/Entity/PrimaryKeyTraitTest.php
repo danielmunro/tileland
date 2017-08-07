@@ -15,7 +15,8 @@ class PrimaryKeyTraitTest extends TestCase
         $building = $civilization->createBuildingEntity(new TradingPost());
         static::assertNull($building->getId());
 
-        global $em;
+        global $app;
+        $em = $app['em'];
         $em->persist($building);
         $em->flush();
         static::assertGreaterThan(0, $building->getId());

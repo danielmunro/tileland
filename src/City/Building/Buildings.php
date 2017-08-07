@@ -6,6 +6,11 @@ namespace TileLand\City\Building;
 interface Buildings
 {
     /**
+     * Culture production
+     */
+    const COMMONS = 'commons';
+
+    /**
      * Food production
      */
     const GRANARY = 'granary';
@@ -20,6 +25,7 @@ interface Buildings
      * Faith production
      */
     const SHRINE = 'shrine';
+    const MONUMENT = 'monument';
 
     /**
      * Gold production

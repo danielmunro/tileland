@@ -20,11 +20,6 @@ class TestBuilding implements Building
         return 10;
     }
 
-    public function getMaintenanceCostInGold(): int
-    {
-        return 1;
-    }
-
     public function getBuildingsUnlocked(): Collection
     {
         return new ArrayCollection([]);

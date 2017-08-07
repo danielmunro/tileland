@@ -73,7 +73,7 @@ class BuildingAttributes
         int $cultureProduction,
         int $scienceProduction,
         int $defense,
-        int $maintenanceCost
+        int $maintenanceCostInGold
     ) {
         $this->foodProduction = $foodProduction;
         $this->buildingProduction = $buildingProduction;
@@ -83,6 +83,76 @@ class BuildingAttributes
         $this->cultureProduction = $cultureProduction;
         $this->scienceProduction = $scienceProduction;
         $this->defense = $defense;
-        $this->maintenanceCostInGold = $maintenanceCost;
+        $this->maintenanceCostInGold = $maintenanceCostInGold;
+    }
+
+    public function getMaintenanceCostInGold(): int
+    {
+        return $this->maintenanceCostInGold;
+    }
+
+    public function getFoodProduction(): int
+    {
+        return $this->foodProduction;
+    }
+
+    public function getBuildingProduction(): int
+    {
+        return $this->buildingProduction;
+    }
+
+    public function getUnitProduction(): int
+    {
+        return $this->unitProduction;
+    }
+
+    public function getGoldProduction(): int
+    {
+        return $this->goldProduction;
+    }
+
+    public function getFaithProduction(): int
+    {
+        return $this->faithProduction;
+    }
+
+    public function getCultureProduction(): int
+    {
+        return $this->cultureProduction;
+    }
+
+    public function getScienceProduction(): int
+    {
+        return $this->scienceProduction;
+    }
+
+    public function getDefense(): int
+    {
+        return $this->defense;
+    }
+
+    public static function createFromBuildingAttributes(
+        BuildingAttributes $buildingAttributes,
+        int $foodProduction,
+        int $buildingProduction,
+        int $unitProduction,
+        int $goldProduction,
+        int $faithProduction,
+        int $cultureProduction,
+        int $scienceProduction,
+        int $defense,
+        int $maintenanceCostInGold
+    ) {
+        return new self(
+            $buildingAttributes->getFoodProduction() + $foodProduction,
+            $buildingAttributes->getBuildingProduction() + $buildingProduction,
+            $buildingAttributes->getUnitProduction() + $unitProduction,
+            $buildingAttributes->getGoldProduction() + $goldProduction,
+            $buildingAttributes->getFaithProduction() + $faithProduction,
+            $buildingAttributes->getCultureProduction() + $cultureProduction,
+            $buildingAttributes->getScienceProduction() + $scienceProduction,
+            $buildingAttributes->getDefense() + $defense,
+            $buildingAttributes->getMaintenanceCostInGold() + $maintenanceCostInGold
+        );
     }
 }

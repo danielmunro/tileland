@@ -130,7 +130,8 @@ class CityTest extends TestCase
 
     public function testChangePersistProduction(): void
     {
-        global $em;
+        global $app;
+        $em = $app['em'];
         $civilization = new TestCivilization();
         $this->city->changeProduction(new Production($civilization->createBuildingEntity(new Shrine())));
         $em->persist($this->city);
