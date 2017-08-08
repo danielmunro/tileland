@@ -7,21 +7,25 @@ use TileLand\Silex\ServiceProvider\ConfigServiceProvider;
 use TileLand\Silex\ServiceProvider\EntityManagerServiceProvider;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
+use Silex\Provider\ServiceControllerServiceProvider;
 
 $app = new Application();
 $app->register(new ConfigServiceProvider());
-$config = $app['config'];
-$app['debug'] = $config['debug'];
-$app->register(
-    new EntityManagerServiceProvider(
-        EntityManager::create(
-            $config['persist'],
-            Setup::createAnnotationMetadataConfiguration(
-                [
-                    __DIR__.'/src/Entity'
-                ],
-                $config['debug']
+$app->register(new ServiceControllerServiceProvider());
+
+\Functional\with($app['config'], function (array $config) use ($app) {
+    $app['debug'] = $config['debug'];
+    $app->register(
+        new EntityManagerServiceProvider(
+            EntityManager::create(
+                $config['persist'],
+                Setup::createAnnotationMetadataConfiguration(
+                    [
+                        __DIR__.'/src/Entity'
+                    ],
+                    $config['debug']
+                )
             )
         )
-    )
-);
+    );
+});

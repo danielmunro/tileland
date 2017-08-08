@@ -45,18 +45,31 @@ require_once __DIR__ . '/../bootstrap.php';
  * -- PATCH /{gameId}/{turnId}
  */
 
-$app->get('/', function () use ($app) {
+$app['games.controller'] = function () use ($app) {
     /** @var \Doctrine\ORM\EntityManager $em */
     $em = $app['em'];
-    $games = $em->getRepository(\TileLand\Entity\Game::class)->findAll();
-    foreach ($games as $game) {
-        /** @var \TileLand\Entity\Game $game */
-        echo $game->getId()."\n";
-    }
-
-    return new \Symfony\Component\HttpFoundation\Response(
-        ''
+    return new \TileLand\Silex\Controller\GameController(
+        new \TileLand\Doctrine\EntityPersister($em),
+        $app['url_generator'],
+        $em->getRepository(\TileLand\Entity\Game::class),
+        $em->getRepository(\TileLand\Entity\Player::class)->find(3)
     );
-});
+};
+
+define('URL_GAME_INFO', 'gameInfo');
+
+$app->get('/games', 'games.controller:getList')
+    ->bind('gameList');
+
+$app->get('/games/{gameId}', 'games.controller:getGame')
+    ->bind(URL_GAME_INFO);
+
+$app->post('/games/{gameId}/player', 'games.controller:addPlayer')
+    ->bind('addPlayer');
+
+$app->patch('/games/{gameId}', 'games.controller:startGame')
+    ->bind('startGame');
+
+$app['controllers']->assert('gameId', '\d+');
 
 $app->run();

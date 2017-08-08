@@ -8,6 +8,7 @@ use TileLand\City\Building\TradingPost;
 use TileLand\Civilization\Civilization;
 use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\City;
+use TileLand\Entity\Game;
 use TileLand\Entity\Player;
 use TileLand\Unit\Trader;
 
@@ -19,8 +20,13 @@ class PlayerTest extends TestCase
      */
     public function testNewUserCanCreateAnyCivilization(Civilization $civilization): void
     {
+        $player = new Player(
+            $this->getMockBuilder(Game::class)->disableOriginalConstructor()->getMock(),
+            $civilization,
+            true
+        );
         static::assertEquals(
-            (new Player($civilization, false))->getCivilization(),
+            $player->getCivilization(),
             $civilization
         );
     }
@@ -37,17 +43,22 @@ class PlayerTest extends TestCase
     public function testGetCivilization(): void
     {
         $civilization = new TestCivilization();
-        static::assertEquals(
-            $civilization,
-            (new Player(new TestCivilization(), true))
-                ->getCivilization()
+        $player = new Player(
+            $this->getMockBuilder(Game::class)->disableOriginalConstructor()->getMock(),
+            new TestCivilization(),
+            true
         );
+        static::assertEquals($civilization, $player->getCivilization());
     }
 
     public function testGetUnits(): void
     {
         $civilization = new TestCivilization();
-        $player = new Player($civilization, true);
+        $player = new Player(
+            $this->getMockBuilder(Game::class)->disableOriginalConstructor()->getMock(),
+            new TestCivilization(),
+            true
+        );
         $player->addUnit($civilization->createUnitEntity(new Trader()));
         $player->addUnit($civilization->createUnitEntity(new Trader()));
         $player->addUnit($civilization->createUnitEntity(new Trader()));
@@ -56,7 +67,11 @@ class PlayerTest extends TestCase
 
     public function testGetCities(): void
     {
-        $player = new Player(new TestCivilization(), true);
+        $player = new Player(
+            $this->getMockBuilder(Game::class)->disableOriginalConstructor()->getMock(),
+            new TestCivilization(),
+            true
+        );
         $player->addCity(new City('test'));
         $player->addCity(new City('test'));
         $player->addCity(new City('test'));

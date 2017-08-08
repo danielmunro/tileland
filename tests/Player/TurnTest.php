@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use TileLand\City\Building\TradingPost;
 use TileLand\Civilization\TestCivilization;
 use TileLand\Entity\City;
+use TileLand\Entity\Game;
 use TileLand\Entity\Player;
 use TileLand\Entity\Tile;
 use TileLand\Enum\Terrain;
@@ -27,7 +28,11 @@ class TurnTest extends TestCase
 
     public function setUp(): void
     {
-        $this->player = new Player($this->getMockBuilder(TestCivilization::class)->disableOriginalConstructor()->getMock(), true);
+        $this->player = new Player(
+            $this->getMockBuilder(Game::class)->disableOriginalConstructor()->getMock(),
+            $this->getMockBuilder(TestCivilization::class)->getMock(),
+            true
+        );
         $this->turn = new Turn($this->player);
     }
 

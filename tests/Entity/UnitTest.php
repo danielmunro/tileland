@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use TileLand\Civilization\TestCivilization;
 use TileLand\Direction\West;
 use TileLand\Entity\Edge;
+use TileLand\Entity\Game;
 use TileLand\Entity\Player;
 use TileLand\Entity\Tile;
 use TileLand\Enum\ActionType;
@@ -47,7 +48,8 @@ class UnitTest extends TestCase
         static::assertCount(0, $tile2->getUnits());
         static::assertEquals($tile1, $unit->getTile());
 
-        $turn = new Turn(new Player($civilization, true));
+        $game = $this->getMockBuilder(Game::class)->disableOriginalConstructor()->getMock();
+        $turn = new Turn(new Player($game, $civilization, true));
         $turn->start();
         $turn->addAction(new UnitAction($unit, ActionType::MOVE(), new West()));
         $turn->end();

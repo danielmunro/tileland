@@ -81,8 +81,9 @@ class Player
      */
     protected $military;
 
-    public function __construct(Civilization $civilization, bool $isHuman)
+    public function __construct(Game $game, Civilization $civilization, bool $isHuman)
     {
+        $this->game = $game;
         $this->civilization = $civilization->getName();
         $this->isHuman = $isHuman;
         $this->tiles = new ArrayCollection();

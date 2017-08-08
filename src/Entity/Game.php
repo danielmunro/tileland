@@ -6,7 +6,7 @@ namespace TileLand\Entity;
 use Doctrine\Common\Collections\Collection;
 
 /**
- * @Entity
+ * @Entity(repositoryClass="\TileLand\Repository\Doctrine\ORMGameRepository")
  */
 class Game
 {
@@ -28,7 +28,7 @@ class Game
      * @var Player
      * @OneToOne(targetEntity="Player")
      */
-    protected $currentPlayerTurn;
+    protected $currentPlayer;
 
     /**
      * @var World
@@ -41,12 +41,22 @@ class Game
         $this->players = $players;
         $this->world = $world;
         $this->turn = 0;
-        $this->currentPlayerTurn = null;
+        $this->currentPlayer = null;
     }
 
-    public function getCurrentPlayerTurn(): Player
+    public function addPlayer(Player $player): void
     {
-        return $this->currentPlayerTurn;
+        $this->players->add($player);
+    }
+
+    public function getCurrentPlayer(): Player
+    {
+        return $this->currentPlayer;
+    }
+
+    public function getCurrentPlayerTurn(): int
+    {
+        return $this->currentPlayer ? $this->currentPlayer->getTurn() : -1;
     }
 
     public function startGame(): void
@@ -56,10 +66,10 @@ class Game
 
     public function endCurrentPlayerTurn(): void
     {
-        $index = $this->players->indexOf($this->currentPlayerTurn);
+        $index = $this->players->indexOf($this->currentPlayer);
 
         if ($this->players->containsKey($index + 1)) {
-            $this->currentPlayerTurn = $this->players->get($index + 1);
+            $this->currentPlayer = $this->players->get($index + 1);
 
             return;
         }
@@ -67,9 +77,14 @@ class Game
         $this->incrementTurn();
     }
 
+    public function getTurn(): int
+    {
+        return $this->turn;
+    }
+
     protected function incrementTurn(): void
     {
         $this->turn++;
-        $this->currentPlayerTurn = $this->players->first();
+        $this->currentPlayer = $this->players->first();
     }
 }
