@@ -49,7 +49,12 @@ class Game
         $this->players->add($player);
     }
 
-    public function getCurrentPlayer(): Player
+    public function getPlayers(): Collection
+    {
+        return $this->players;
+    }
+
+    public function getCurrentPlayer(): ?Player
     {
         return $this->currentPlayer;
     }

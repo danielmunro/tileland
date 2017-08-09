@@ -6,7 +6,6 @@ namespace TileLand\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use TileLand\Civilization\Civilization;
-use TileLand\Civilization\CivilizationFactory;
 
 /**
  * @Entity
@@ -90,11 +89,20 @@ class Player
         $this->units = new ArrayCollection();
         $this->cities = new ArrayCollection();
         $this->turn = 0;
+        $this->gold = 0;
+        $this->science = 0;
+        $this->culture = 0;
+        $this->military = 0;
     }
 
-    public function getCivilization(): Civilization
+    public function getGameId(): int
     {
-        return CivilizationFactory::createCivilizationFromName($this->civilization);
+        return $this->game->getId();
+    }
+
+    public function getCivilization(): string
+    {
+        return $this->civilization;
     }
 
     /**

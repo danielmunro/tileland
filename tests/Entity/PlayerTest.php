@@ -26,8 +26,8 @@ class PlayerTest extends TestCase
             true
         );
         static::assertEquals(
-            $player->getCivilization(),
-            $civilization
+            $civilization->getName(),
+            $player->getCivilization()
         );
     }
 
@@ -48,7 +48,7 @@ class PlayerTest extends TestCase
             new TestCivilization(),
             true
         );
-        static::assertEquals($civilization, $player->getCivilization());
+        static::assertEquals($civilization->getName(), $player->getCivilization());
     }
 
     public function testGetUnits(): void

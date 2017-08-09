@@ -16,6 +16,7 @@ use TileLand\Doctrine\EntityPersister;
 use TileLand\Entity\Player;
 use TileLand\Repository\GameRepository;
 use TileLand\Transformer\GameTransformer;
+use TileLand\Transformer\PlayerTransformer;
 
 class GameController
 {
@@ -39,7 +40,7 @@ class GameController
         $this->player = $player;
     }
 
-    public function getList(): Response
+    public function getList(): JsonResponse
     {
         return new JsonResponse(
             self::createResourceData(
@@ -49,6 +50,11 @@ class GameController
                 )
             )
         );
+    }
+
+    public function getListOptions(): JsonResponse
+    {
+        return new JsonResponse(['GET']);
     }
 
     public function getGame(int $gameId): Response
@@ -72,13 +78,20 @@ class GameController
         );
     }
 
-    public function addPlayer(int $gameId): Response
+    public function getGameOptions(): JsonResponse
+    {
+        return new JsonResponse(
+            ['GET', 'PATCH']
+        );
+    }
+
+    public function addPlayer(int $gameId): JsonResponse
     {
         $game = $this->gameRepository->findById($gameId);
 
         if (!$game) {
-            return new Response(
-                'Game not found!',
+            return new JsonResponse(
+                ['message' => 'Game not found!'],
                 404
             );
         }
@@ -93,6 +106,45 @@ class GameController
                 'message' => 'Player added.',
             ],
             201
+        );
+    }
+
+    public function getPlayer(int $gameId, int $playerId): JsonResponse
+    {
+        $game = $this->gameRepository->findById($gameId);
+
+        if (!$game) {
+            return new JsonResponse(
+                ['message' => 'Game not found!'],
+                404
+            );
+        }
+
+        $player = $game->getPlayers()->filter(function (Player $player) use ($playerId) {
+            return $player->getId() == $playerId;
+        })->first();
+
+        if (!$player) {
+            return new JsonResponse(
+                ['message' => 'Player not found!'],
+                404
+            );
+        }
+
+        return new JsonResponse(
+            self::createResourceData(
+                new Item(
+                    $player,
+                    new PlayerTransformer($this->urlGenerator)
+                )
+            )
+        );
+    }
+
+    public function getPlayerOptions(): JsonResponse
+    {
+        return new JsonResponse(
+            ['POST']
         );
     }
 
