@@ -3,15 +3,11 @@ declare(strict_types=1);
 
 namespace TileLand\Silex\Controller;
 
-use function Functional\with;
-use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\ResourceAbstract;
-use League\Fractal\Serializer\DataArraySerializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use TileLand\Civilization\TestCivilization;
 use TileLand\Doctrine\EntityPersister;
@@ -97,13 +93,12 @@ class GameController
     public function getPlayerOptions(): JsonResponse
     {
         return new JsonResponse(
-            ['POST']
+            ['POST', 'GET']
         );
     }
 
     public function createCity(Game $game, Request $request): JsonResponse
     {
-
         return new JsonResponse();
     }
 }

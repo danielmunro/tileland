@@ -18,4 +18,3 @@ function reductionModifier(int $baseAmount): int
         (int) floor($baseAmount * 0.5)
     );
 }
-

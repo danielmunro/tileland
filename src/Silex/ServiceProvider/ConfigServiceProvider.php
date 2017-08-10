@@ -10,7 +10,8 @@ class ConfigServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple)
     {
-        $pimple['config'] = \Symfony\Component\Yaml\Yaml::parse(<<<NOCONFIG
+        $pimple['config'] = \Symfony\Component\Yaml\Yaml::parse(
+            <<<NOCONFIG
 debug: true
 persist:
   driver: pdo_mysql

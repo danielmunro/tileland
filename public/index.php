@@ -2,6 +2,15 @@
 
 require_once __DIR__ . '/../bootstrap.php';
 
+use TileLand\Silex\Controller\GameController;
+use TileLand\Silex\Controller\PlayerController;
+use TileLand\Doctrine\EntityPersister;
+use TileLand\Silex\View\JsonView;
+use TileLand\Silex\ControllerMount\GamesControllerMount;
+use TileLand\Silex\ControllerMount\PlayersControllerMount;
+use TileLand\Silex\Converter\GameConverter;
+use TileLand\Silex\Converter\PlayerConverter;
+
 /**
  * ENDPOINTS
  *
@@ -48,11 +57,21 @@ require_once __DIR__ . '/../bootstrap.php';
 $app['games.controller'] = function () use ($app) {
     /** @var \Doctrine\ORM\EntityManager $em */
     $em = $app['em'];
-    return new \TileLand\Silex\Controller\GameController(
-        new \TileLand\Doctrine\EntityPersister($em),
+    return new GameController(
+        new EntityPersister($em),
         $app['url_generator'],
         $em->getRepository(\TileLand\Entity\Game::class),
         $em->getRepository(\TileLand\Entity\Player::class)->find(3)
+    );
+};
+
+$app['players.controller'] = function () use ($app) {
+    /** @var \Doctrine\ORM\EntityManager $em */
+    $em = $app['em'];
+    return new PlayerController(
+        new EntityPersister($em),
+        $em->getRepository(\TileLand\Entity\Player::class),
+        $app['url_generator']
     );
 };
 
@@ -65,67 +84,25 @@ define('URL_GAME_ADD_PLAYER', 'addPlayer');
  * https://silex.symfony.com/doc/2.0/usage.html
  * convert game ID to game entity
  */
-$app->mount('/games', function (\Silex\ControllerCollection $games) use ($app) {
-    $games->options('', 'games.controller:getListOptions');
-    $games->get('', 'games.controller:getList')->bind(URL_GAME_LIST);
-    $games->mount('/{game}', function (\Silex\ControllerCollection $game) use ($app) {
-        $game->get('', 'games.controller:getGame')->bind(URL_GAME_INFO);
-        $game->options('', 'games.controller:getGameOptions');
-        $game->patch('', 'games.controller:startGame')->bind('startGame');
-        $game->post('/players', 'games.controller:addPlayer')->bind(URL_GAME_ADD_PLAYER);
-        $game->mount('/players', function (\Silex\ControllerCollection $players) use ($app) {
-            $players->options('', 'games.controller:getPlayerOptions');
-            $players->get('/{player}', 'games.controller:getPlayer')->bind(URL_GAME_PLAYER_INFO);
-            $players->convert('player', function (int $playerId) use ($app) {
-                /** @var \Doctrine\ORM\EntityManager $em */
-                $em = $app['em'];
-                /** @var \TileLand\Repository\PlayerRepository $playerRepository */
-                $playerRepository = $em->getRepository(\TileLand\Entity\Player::class);
-                $player = $playerRepository->findById($playerId);
+/** @var \Doctrine\ORM\EntityManager $em */
+$em = $app['em'];
+$gameRepository = $em->getRepository(\TileLand\Entity\Game::class);
+$playerRepository = $em->getRepository(\TileLand\Entity\Player::class);
+$app->mount(
+    '/games',
+    new GamesControllerMount($gameRepository, $playerRepository)
+);
+$app->mount(
+    '/players',
+    new PlayersControllerMount($playerRepository)
+);
 
-                if (!$player) {
-                    throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(
-                        'Player not found'
-                    );
-                }
+/** @var \Silex\ControllerCollection $controllerCollection */
+$controllerCollection = $app['controllers'];
+$controllerCollection->assert('game', '\d+');
+$controllerCollection->assert('player', '\d+');
+$controllerCollection->convert('game', new GameConverter($gameRepository));
+$controllerCollection->convert('player', new PlayerConverter($playerRepository));
 
-                return $player;
-            });
-        });
-        $game->convert('game', function (int $gameId) use ($app) {
-            /** @var \Doctrine\ORM\EntityManager $em */
-            $em = $app['em'];
-            /** @var \TileLand\Repository\GameRepository $gameRepository */
-            $gameRepository = $em->getRepository(\TileLand\Entity\Game::class);
-            $game = $gameRepository->findById($gameId);
-
-            if (!$game) {
-                throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException(
-                    'Game not found'
-                );
-            }
-
-            return $game;
-        });
-    });
-});
-
-$app['controllers']->assert('game', '\d+');
-$app['controllers']->assert('player', '\d+');
-
-$app->view(function (\League\Fractal\Resource\ResourceAbstract $resource, \Symfony\Component\HttpFoundation\Request $request) {
-    $manager = new \League\Fractal\Manager();
-    $manager->setSerializer(new \League\Fractal\Serializer\DataArraySerializer());
-    \Functional\with(
-        $request->get('include'),
-        function (string $include) use ($manager) {
-            $manager->parseIncludes($include);
-        }
-    );
-
-    return new \Symfony\Component\HttpFoundation\JsonResponse(
-        $manager->createData($resource)->toArray()
-    );
-});
-
+$app->view(new JsonView());
 $app->run();
