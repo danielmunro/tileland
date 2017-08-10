@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use TileLand\Civilization\Civilization;
 
 /**
- * @Entity
+ * @Entity(repositoryClass="\TileLand\Repository\Doctrine\ORMPlayerRepository")
  */
 class Player
 {

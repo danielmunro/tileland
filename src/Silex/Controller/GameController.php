@@ -3,16 +3,19 @@ declare(strict_types=1);
 
 namespace TileLand\Silex\Controller;
 
+use function Functional\with;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\ResourceAbstract;
 use League\Fractal\Serializer\DataArraySerializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use TileLand\Civilization\TestCivilization;
 use TileLand\Doctrine\EntityPersister;
+use TileLand\Entity\Game;
 use TileLand\Entity\Player;
 use TileLand\Repository\GameRepository;
 use TileLand\Transformer\GameTransformer;
@@ -40,15 +43,11 @@ class GameController
         $this->player = $player;
     }
 
-    public function getList(): JsonResponse
+    public function getList(): ResourceAbstract
     {
-        return new JsonResponse(
-            self::createResourceData(
-                new Collection(
-                    $this->gameRepository->findByPlayer($this->player),
-                    new GameTransformer($this->urlGenerator)
-                )
-            )
+        return new Collection(
+            $this->gameRepository->findByPlayer($this->player),
+            new GameTransformer($this->urlGenerator)
         );
     }
 
@@ -57,24 +56,11 @@ class GameController
         return new JsonResponse(['GET']);
     }
 
-    public function getGame(int $gameId): Response
+    public function getGame(Game $game): ResourceAbstract
     {
-        $game = $this->gameRepository->findById($gameId);
-
-        if (!$game) {
-            return new Response(
-                'game not found!',
-                404
-            );
-        }
-
-        return new JsonResponse(
-            self::createResourceData(
-                new Item(
-                    $game,
-                    new GameTransformer($this->urlGenerator)
-                )
-            )
+        return new Item(
+            $game,
+            new GameTransformer($this->urlGenerator)
         );
     }
 
@@ -85,17 +71,8 @@ class GameController
         );
     }
 
-    public function addPlayer(int $gameId): JsonResponse
+    public function addPlayer(Game $game): JsonResponse
     {
-        $game = $this->gameRepository->findById($gameId);
-
-        if (!$game) {
-            return new JsonResponse(
-                ['message' => 'Game not found!'],
-                404
-            );
-        }
-
         $player = new Player($game, new TestCivilization(), true);
         $game->addPlayer($player);
         $this->entityPersister->persist($player);
@@ -109,35 +86,11 @@ class GameController
         );
     }
 
-    public function getPlayer(int $gameId, int $playerId): JsonResponse
+    public function getPlayer(Player $player): ResourceAbstract
     {
-        $game = $this->gameRepository->findById($gameId);
-
-        if (!$game) {
-            return new JsonResponse(
-                ['message' => 'Game not found!'],
-                404
-            );
-        }
-
-        $player = $game->getPlayers()->filter(function (Player $player) use ($playerId) {
-            return $player->getId() == $playerId;
-        })->first();
-
-        if (!$player) {
-            return new JsonResponse(
-                ['message' => 'Player not found!'],
-                404
-            );
-        }
-
-        return new JsonResponse(
-            self::createResourceData(
-                new Item(
-                    $player,
-                    new PlayerTransformer($this->urlGenerator)
-                )
-            )
+        return new Item(
+            $player,
+            new PlayerTransformer($this->urlGenerator)
         );
     }
 
@@ -148,19 +101,9 @@ class GameController
         );
     }
 
-    private static function getFractalManager(): Manager
+    public function createCity(Game $game, Request $request): JsonResponse
     {
-        $manager = new Manager();
-        $manager->setSerializer(new DataArraySerializer());
 
-        return $manager;
+        return new JsonResponse();
     }
-
-    private static function createResourceData(ResourceAbstract $resourceAbstract): array
-    {
-        return self::getFractalManager()->createData(
-            $resourceAbstract
-        )->toArray();
-    }
-
 }
