@@ -3,19 +3,23 @@ declare(strict_types=1);
 
 namespace TileLand\Silex\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\ResourceAbstract;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 use Symfony\Component\Routing\Generator\UrlGenerator;
-use TileLand\Civilization\TestCivilization;
 use TileLand\Doctrine\EntityPersister;
 use TileLand\Entity\Game;
 use TileLand\Entity\Player;
+use TileLand\Entity\World;
+use TileLand\Exception\GameStartedException;
+use TileLand\Exception\NoPlayersException;
 use TileLand\Repository\GameRepository;
 use TileLand\Transformer\GameTransformer;
-use TileLand\Transformer\PlayerTransformer;
 
 class GameController
 {
@@ -52,6 +56,17 @@ class GameController
         return new JsonResponse(['GET']);
     }
 
+    public function postGame(): ResourceAbstract
+    {
+        $world = new World();
+        $game = new Game(new ArrayCollection(), $world);
+        $this->entityPersister->persist($game);
+        $this->entityPersister->persist($world);
+        $this->entityPersister->flush();
+
+        return new Item($game, new GameTransformer($this->urlGenerator));
+    }
+
     public function getGame(Game $game): ResourceAbstract
     {
         return new Item(
@@ -63,38 +78,30 @@ class GameController
     public function getGameOptions(): JsonResponse
     {
         return new JsonResponse(
-            ['GET', 'PATCH']
+            ['GET', 'PATCH', 'POST']
         );
     }
 
-    public function addPlayer(Game $game): JsonResponse
+    public function startGame(Game $game): ResourceAbstract
     {
-        $player = new Player($game, new TestCivilization(), true);
-        $game->addPlayer($player);
-        $this->entityPersister->persist($player);
+        try {
+            $game->startGame();
+        } catch (GameStartedException $e) {
+            throw new ConflictHttpException(
+                $e->getMessage(),
+                $e
+            );
+        } catch (NoPlayersException $e) {
+            throw new PreconditionFailedHttpException(
+                $e->getMessage(),
+                $e
+            );
+        }
+
+        $this->entityPersister->persist($game);
         $this->entityPersister->flush();
 
-        return new JsonResponse(
-            [
-                'message' => 'Player added.',
-            ],
-            201
-        );
-    }
-
-    public function getPlayer(Player $player): ResourceAbstract
-    {
-        return new Item(
-            $player,
-            new PlayerTransformer($this->urlGenerator)
-        );
-    }
-
-    public function getPlayerOptions(): JsonResponse
-    {
-        return new JsonResponse(
-            ['POST', 'GET']
-        );
+        return new Item($game, new GameTransformer($this->urlGenerator));
     }
 
     public function createCity(Game $game, Request $request): JsonResponse

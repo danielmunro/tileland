@@ -7,6 +7,7 @@ use League\Fractal\Resource\Collection;
 use League\Fractal\TransformerAbstract;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use TileLand\Entity\Player;
+use TileLand\Enum\Url;
 
 class PlayerTransformer extends TransformerAbstract
 {
@@ -34,7 +35,7 @@ class PlayerTransformer extends TransformerAbstract
             'civilization' => $player->getCivilization(),
             'links' => [
                 'self' => $this->urlGenerator->generate(
-                    URL_GAME_PLAYER_INFO,
+                    Url::GET_PLAYER,
                     [
                         'player' => $player->getId(),
                         'game' => $player->getGameId(),

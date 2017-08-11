@@ -10,6 +10,7 @@ use TileLand\Silex\ControllerMount\GamesControllerMount;
 use TileLand\Silex\ControllerMount\PlayersControllerMount;
 use TileLand\Silex\Converter\GameConverter;
 use TileLand\Silex\Converter\PlayerConverter;
+use TileLand\Silex\ErrorHandler\JsonErrorHandler;
 
 /**
  * ENDPOINTS
@@ -53,56 +54,44 @@ use TileLand\Silex\Converter\PlayerConverter;
  * -- POST /{gameId}/{turnId}
  * -- PATCH /{gameId}/{turnId}
  */
+/** @var \Doctrine\ORM\EntityManager $em */
+$em = $app['em'];
+/** @var \TileLand\Repository\GameRepository $gameRepository */
+$gameRepository = $em->getRepository(\TileLand\Entity\Game::class);
+/** @var \TileLand\Repository\PlayerRepository $playerRepository */
+$playerRepository = $em->getRepository(\TileLand\Entity\Player::class);
 
-$app['games.controller'] = function () use ($app) {
-    /** @var \Doctrine\ORM\EntityManager $em */
-    $em = $app['em'];
+$app['games.controller'] = function () use ($app, $em, $gameRepository, $playerRepository) {
     return new GameController(
         new EntityPersister($em),
         $app['url_generator'],
-        $em->getRepository(\TileLand\Entity\Game::class),
-        $em->getRepository(\TileLand\Entity\Player::class)->find(3)
+        $gameRepository,
+        $playerRepository->findById(3) /** @todo remove hardcoded id */
     );
 };
 
-$app['players.controller'] = function () use ($app) {
-    /** @var \Doctrine\ORM\EntityManager $em */
-    $em = $app['em'];
+$app['players.controller'] = function () use ($app, $em, $playerRepository) {
     return new PlayerController(
         new EntityPersister($em),
-        $em->getRepository(\TileLand\Entity\Player::class),
+        $playerRepository,
         $app['url_generator']
     );
 };
-
-define('URL_GAME_LIST', 'gameList');
-define('URL_GAME_INFO', 'gameInfo');
-define('URL_GAME_PLAYER_INFO', 'playerInfo');
-define('URL_GAME_ADD_PLAYER', 'addPlayer');
 
 /**
  * https://silex.symfony.com/doc/2.0/usage.html
  * convert game ID to game entity
  */
-/** @var \Doctrine\ORM\EntityManager $em */
-$em = $app['em'];
-$gameRepository = $em->getRepository(\TileLand\Entity\Game::class);
-$playerRepository = $em->getRepository(\TileLand\Entity\Player::class);
-$app->mount(
-    '/games',
-    new GamesControllerMount($gameRepository, $playerRepository)
-);
-$app->mount(
-    '/players',
-    new PlayersControllerMount($playerRepository)
-);
+$app->mount('/games', new GamesControllerMount($gameRepository, $playerRepository));
+$app->mount('/players', new PlayersControllerMount($playerRepository));
 
 /** @var \Silex\ControllerCollection $controllerCollection */
 $controllerCollection = $app['controllers'];
-$controllerCollection->assert('game', '\d+');
-$controllerCollection->assert('player', '\d+');
-$controllerCollection->convert('game', new GameConverter($gameRepository));
-$controllerCollection->convert('player', new PlayerConverter($playerRepository));
+$controllerCollection->assert('game', '\d+')
+    ->convert('game', new GameConverter($gameRepository));
+$controllerCollection->assert('player', '\d+')
+    ->convert('player', new PlayerConverter($playerRepository));
 
 $app->view(new JsonView());
+$app->error(new JsonErrorHandler());
 $app->run();

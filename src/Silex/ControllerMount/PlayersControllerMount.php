@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TileLand\Silex\ControllerMount;
 
 use Silex\ControllerCollection;
+use TileLand\Enum\Url;
 use TileLand\Repository\PlayerRepository;
 use TileLand\Silex\Converter\PlayerConverter;
 
@@ -18,10 +19,12 @@ class PlayersControllerMount
 
     public function __invoke(ControllerCollection $players)
     {
-        $players->post('', 'games.controller:addPlayer')->bind(URL_GAME_ADD_PLAYER);
-        $players->options('', 'games.controller:getPlayerOptions');
+        $players->options('', 'players.controller:getPlayerOptions');
+        $players->post('', 'players.controller:postPlayer')
+            ->bind(Url::POST_PLAYER);
         $players->get('', 'players.controller:getPlayers');
-        $players->get('/{player}', 'games.controller:getPlayer')->bind(URL_GAME_PLAYER_INFO);
+        $players->get('/{player}', 'players.controller:getPlayer')
+            ->bind(Url::GET_PLAYER);
         $players->convert('player', new PlayerConverter($this->playerRepository));
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace TileLand\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use TileLand\Exception\GameStartedException;
+use TileLand\Exception\NoPlayersException;
 
 /**
  * @Entity(repositoryClass="\TileLand\Repository\Doctrine\ORMGameRepository")
@@ -44,8 +46,17 @@ class Game
         $this->currentPlayer = null;
     }
 
+    public function hasBegun(): bool
+    {
+        return $this->turn > 0;
+    }
+
     public function addPlayer(Player $player): void
     {
+        if ($this->hasBegun()) {
+            throw new \RuntimeException('Game has already begun!');
+        }
+
         $this->players->add($player);
     }
 
@@ -66,6 +77,14 @@ class Game
 
     public function startGame(): void
     {
+        if ($this->hasBegun()) {
+            throw new GameStartedException('Game has already started');
+        }
+
+        if ($this->players->isEmpty()) {
+            throw new NoPlayersException('Cannot start a game without players');
+        }
+
         $this->incrementTurn();
     }
 
